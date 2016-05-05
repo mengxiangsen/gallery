@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body onselectstart="return false">
+  <!--1.模块化编写程序，把html当成一个模板，用innerHTML得到模板，然后在根据data中数据循环，用replace替换模板里的内容-->
+	<div class="wrap" id="wrap">
+		<div class="photo photo_front" id="photo_{{index}}" onclick="turn(this)">  <!-- 负责平移和旋转 -->
+		  <div class="photo_wrap">    <!-- 负责翻转 -->
+			 <div class="side side_front">
+				<p class="image"><img src="{{img}}"></p>
+				<p class="caption">{{caption}}</p>
+			 </div>
+			 <div class="side side_back">
+				<p class="desc">{{desc}}</p>
+			 </div>
+	      </div>		 
+		</div>
+	</div>
+	<script type="text/javascript">
+
+        var data = [
+           { id:0,
+             img:'imgs/lufei.jpg',
+             name:'蒙其·D·路飞',
+             desc:'性格积极乐观，爱憎分明且十分重视伙伴，对任何危险的事物都超感兴趣。看似白痴，却是一个大智若愚型的无愧船长之职的人。和其他传统的海贼所不同的是，他并不会为了追求财富而无故杀戮，而是享受着身为海贼的冒险。'},
+           {id:1,
+            img:'imgs/souluo.jpg',
+            name:'罗罗亚·索隆',
+            desc:'为了小时候与挚友的约定而踏上了前往世界第一剑士的道路，随后成为主角蒙奇·D·路飞的第一个伙伴。在初次败给世界第一剑士“鹰眼米霍克”后向路飞发誓永不再败，并且更加努力的锻炼自己。两年后的他成功与伙伴们汇合，并且为了实现自己的梦想，奔赴强者如云的新世界。'},
+           {id:2,
+            img:'imgs/shanzhi.jpg',
+            name:'山治',
+            desc:'小时候跟随大海贼红脚哲普学习厨艺。踢技以快准狠被海军称之为“黑足”，但从不愿意伤害任何的女性，哪怕是敌人。在经过司法岛一战后也成了悬赏对象，首次悬赏就有7700万之高。梦想是找到传说之海All Blue而跟随路飞一同进入了伟大航路。是文斯莫克家族的第三子。'},
+           {id:3,
+            img:'imgs/namei.jpg',
+            name:'娜美',
+            desc:'头脑聪明又机灵，精通气象学和航海术，擅长偷术，能用身体感知天气，完美指示航路，是个能精确画出航海图的天才航海士。本质上是个细心、善良、重视感情、嫉恶如仇、偶尔有些温柔的能干的女性。最喜欢钱和橘子，梦想是要画出全世界的地图。'},
+           {id:4,
+            img:'imgs/luobing.jpg',
+            name:'妮可·罗宾',
+            desc:'草帽海贼团的考古学家，出生在西海的考古学之岛“奥哈拉”，年仅8岁就被悬赏千万的奥哈拉幸存者。是拥有“花花果实”的恶魔果实能力者，能让身体的任何部位像开花一样绽放在视线范围内的任何有形体的事物上并作出攻击或其他用途。目标是找到真正的历史正文，绝不饶恕践踏历史文物的人'},
+           {id:5,
+            img:'imgs/wusuobu.jpg',
+            name:'乌索普',
+            desc:'草帽海贼团狙击手，特征为头戴狙击防风镜、浅啡色头巾，长鼻子。小时候是出名的吹牛大王，和村里的几个孩子组成“乌索普海贼团”，自称乌索普船长。发现克洛船长的阴谋后，立志要保护村里的人，和路飞并肩作战。梦想是要成为勇敢的海上战士'},
+           {id:6,
+            img:'imgs/qiaoba.jpg',
+            name:'东尼·东尼·乔巴',
+            desc:'乔巴是草帽海贼团的船医，吃了人人果实的驯鹿能力者，人人驯鹿，可用蓝波球进行八段身体变形。托尼托尼·乔巴是草帽海贼团的第五位伙伴，职位是船医。原为磁鼓岛库蕾哈医生最宠爱的驯鹿兼医疗助手。'},
+           {id:7,
+            img:'imgs/fulanqi.jpg',
+            name:'弗兰奇',
+            desc:'草帽海贼团船匠。身为改造人的弗兰奇，身体藏着各种兵器。弗兰奇在被cp9抓入司法岛的过程中被路飞他们救罗宾的精神所感动，义无返顾的站在路飞他们一边。司法岛事件结束后，弗兰奇用宝树亚当的材料建造了一艘梦想之船，取名“桑尼号”，并赠送给草帽海贼团。后来在路飞的邀请下进入了草帽海贼团。'},
+           { id:8,
+             img:'imgs/kulou.jpg',
+             name:'布鲁克',
+             desc:'草帽海贼团音乐家。在魔幻三角地带遇到敌人并遭遇毒手，因黄泉果实的能力，灵魂走出黄泉并准备回身体时，在魔幻三角地带迷路一年，找到的身体已变成骷髅，但爆炸头仍然存在，自此他只能以骷髅状态生存'},
+        ]
+
+   //通用函数
+    function g(selector){
+      var method = selector.substr(0,1) == '.' ? 'getElementsByClassName' : 'getElementById' ;
+      return document[method](selector.substr(1));
+    }
+
+    /*1.模块化编写程序，把html当成一个模板，用innerHTML得到模板，然后在根据data中数据循环，用replace替换模板里的内容,输出海报内容*/
+    function addPage(){
+      var template = g('#wrap').innerHTML;
+      var html = [];
+      var nav=[];
+
+      for(s in data){
+        var _html = template.replace('{{index}}',data[s].id)
+                            .replace('{{img}}',data[s].img)
+                            .replace('{{caption}}',data[s].name)
+                            .replace('{{desc}}',data[s].desc);
+        html.push(_html);
+
+        //5使图片与按钮关联起来，使用点击事件时，传入参数为图片对象，当点击按钮是，实际上是操作图片对象
+        nav.push('<span id="nav_'+data[s].id+'" onclick="turn(g(\'#photo_'+s+'\'))" class="i">&nbsp;</span>');
+      }
+
+
+      html.push('<div class="nav">'+nav.join("")+'</div>');
+
+      g('#wrap').innerHTML = html.join("");
+      
+      //2实现3d效果
+      //3编写一个随机函数，随机产生一个0-8之间的数，使其添加.center居中
+      rsort(random([0,data.length-1]));
+
+    }
+    addPage();
+    
+
+    //4.3计算左右海报的分区范围
+    function range(){
+      var range = {
+        left:{x:[] , y:[]},
+        right:{x:[] ,y:[]}
+      };
+
+      var wrap = {
+        w : g('#wrap').clientWidth,
+        h : g('#wrap').clientHeight  
+      }
+      var photo = {
+        w : g('.photo')[0].clientWidth,
+        h : g('.photo')[0].clientHeight
+      }
+      
+      range.wrap = wrap;
+      range.photo =photo;
+
+      range.left.x = [0-photo.w/2, wrap.w/2 - photo.w/2 - photo.w];
+      range.left.y = [0-photo.h +photo.h/2 , wrap.h-photo.h/2];
+
+      range.right.x = [wrap.w/2+photo.w/2 , wrap.w- photo.w/2];
+      range.right.y = range.left.y;
+
+      return range;
+    }
+
+    //第4步，居中，两侧分区
+    function rsort(n){
+
+      var _photo = g('.photo') ;
+      var photos = [];  //真正的数组
+
+      for(var s = 0 ;s<_photo.length ;s++){
+        
+         _photo[s].className = _photo[s].className.replace(/\s*photo_center\s*/,'');
+         _photo[s].className = _photo[s].className.replace(/\s*photo_front\s*/,'');
+         _photo[s].className = _photo[s].className.replace(/\s*photo_back\s*/,'');
+
+         _photo[s].className += ' photo_front ';
+         _photo[s].style.left="";
+         _photo[s].style.top ="";
+
+         _photo[s].style['transform'] = 'rotate(0deg) scale(1.3)';
+         
+         photos.push(_photo[s]);
+      }
+      //   设置center时，先清空cener
+      //3编写一个随机函数，随机产生一个0-8之间的数，使其添加.center居中
+      var photo_center = g('#photo_' + n) ;
+      photo_center.className += ' photo_center';
+
+      //4.1 取出设置中间的图片
+      photo_center = photos.splice(n,1)[0];
+  
+      //4.2把剩余海报分成左右两个部分
+      var photo_left = photos.splice(0,Math.ceil(photos.length/2));
+      var photo_right= photos;
+      
+      //4.3计算左右海报的分区范围
+      var ranges = range();
+
+      for(s in photo_left){
+        var photo = photo_left[s];
+
+        photo.style.left= random(ranges.left.x) + 'px';
+        photo.style.top = random(ranges.left.y) + 'px';
+
+        photo.style['transform'] = 'rotate('+ random([-360,360])+'deg) scale(1)';
+      }
+      for(s in photo_right){
+        var photo = photo_right[s];
+
+        photo.style.left= random(ranges.right.x) + 'px';
+        photo.style.top = random(ranges.right.y) + 'px';
+        
+        photo.style['transform'] = 'rotate('+ random([-150,150])+'deg) scale(1)';
+      }
+
+      //控制按钮
+      var navs = g('.i');
+      for(var s=0;s<navs.length;s++){
+        navs[s].className = navs[s].className.replace(/\s*i_current\s*/,' ');
+        navs[s].className = navs[s].className.replace(/\s*i_back\s*/,' ');
+      }
+
+      g('#nav_' + n).className += ' i_current ';
+
+
+    }
+
+
+
+    //随机生成一个值0~8
+    function random(range){
+      var max = Math.max(range[0] ,range[1]);
+      var min = Math.min(range[0] ,range[1]);
+
+      var diff= max-min+1;  //可能的总数量
+
+      var number = Math.floor((Math.random() * diff + min));
+
+      //值 = Math.floor(Math.random()*可能值的总数量 + 第一个可能值)；
+      
+      return number;
+    }
+
+
+		function turn(elem){
+
+			var cls = elem.className;
+      var n = elem.id.split("_")[1];
+    
+      if(!/photo_center/.test(cls)){
+          return rsort(n);
+      }
+      
+      //5，点击事件，执行turn函数,传递参数为当前对象 ，如果匹配模式为前面，测替换成背后，如果是背后测替换成前面
+			if(/photo_front/.test(cls)){
+
+				cls = cls.replace(/photo_front/,'photo_back');
+
+        //6.通过图片的Id中的数字，定位到按钮中的Id,在应用不同的css样式 
+        g('#nav_' + n).className += ' i_back';
+
+        setTimeout("settime()",6000);
+
+			}else{
+     
+				cls = cls.replace(/photo_back/,'photo_front');
+        g('#nav_' + n).className = g('#nav_' + n).className.replace(/\s*i_back\s*/," ");
+			}
+			
+      return elem.className = cls;
+		}
+    
+    function settime(){
+      var back = g('.photo_back');
+      for(var s =0 ;s<back.length ;s++){
+         back[s].className = back[s].className.replace(/photo_back/,'photo_front');
+      }
+     
+      var btnback = g('.i_back');
+      for(var s =0 ;s<btnback.length ;s++){
+         btnback[s].className = btnback[s].className.replace(/i_back/,' ');
+      }
+
+      return back;
+    }
+
+	</script>
+</body>	
+</html>
